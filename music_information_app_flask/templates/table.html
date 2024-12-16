@@ -1,0 +1,18 @@
+<table id="data-table" class="display">
+    <thead>
+        <tr>
+            {% for field in fields %}
+                <th>{{ field }}</th> <!-- Заголовок каждого столбца -->
+            {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for row in data %}
+            <tr>
+                {% for field in fields %}
+                    <td>{{ getattr(row, field) }}</td> <!-- Отображение значений для каждой строки -->
+                {% endfor %}
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>

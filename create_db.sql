@@ -1,3 +1,5 @@
+USE Music_information;
+
 CREATE TABLE Artist (
     id INT IDENTITY PRIMARY KEY, 
     name NVARCHAR(100) NOT NULL, 
@@ -33,5 +35,35 @@ VALUES
 
     (3, 'Fields of Gold', 'Soft Rock', '00:03:40', '1993-06-01', 4.6),   
     (3, 'Englishman in New York', 'Jazz-pop', '00:04:27', '1988-02-01', 4.8); 
+
+CREATE TABLE Dictionary (
+    id INT IDENTITY PRIMARY KEY,
+    name NVARCHAR(100) NOT NULL,
+    displayName NVARCHAR(100) NOT NULL
+);
+
+CREATE TABLE Dictionary_Fields (
+    id INT IDENTITY PRIMARY KEY,
+    dictionaryId INT NOT NULL,
+    fieldName NVARCHAR(100) NOT NULL,
+    displayName NVARCHAR(100) NOT NULL,
+    fieldType NVARCHAR(20) NOT NULL, -- 'text', 'date', 'select', etc.
+    CONSTRAINT FK_Dictionary_Fields FOREIGN KEY (dictionaryId) REFERENCES Dictionary(id)
+);
+
+INSERT INTO Dictionary (name, displayName) 
+VALUES ('Artist', 'Исполнители'), ('Song', 'Песни');
+
+INSERT INTO Dictionary_Fields (dictionaryId, fieldName, displayName, fieldType) VALUES
+(1, 'name', 'Имя', 'text'),
+(1, 'startDate', 'Дата начала', 'date'),
+(1, 'country', 'Страна', 'text'),
+(1, 'description', 'Описание', 'textarea'),
+(2, 'title', 'Название', 'text'),
+(2, 'genre', 'Жанр', 'text'),
+(2, 'duration', 'Продолжительность', 'text'),
+(2, 'releaseDate', 'Дата релиза', 'date'),
+(2, 'rating', 'Рейтинг', 'number');
+
 
 
