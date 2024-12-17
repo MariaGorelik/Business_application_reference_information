@@ -8,29 +8,16 @@
 <body>
     <h1>Добро пожаловать!</h1>
     <p>ФИО: Горелик Мария Вадимовна<br>Курс: 3<br>Группа: 11<br>Год: 2024</p>
-
     <label for="dictionary">Выберите справочник:</label>
     <select id="dictionary" onchange="loadTable()">
-        <!-- Опции будут загружены здесь через JS -->
+        <option value="artist">Исполнители</option>
+        <option value="song">Песни</option>
     </select>
-
     <div id="table-container"></div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
-
     <script>
-        // Загрузка справочников в выпадающий список
-        function loadDictionaries() {
-            $.get('/api/dictionaries', function(data) {
-                const dictionarySelect = $('#dictionary');
-                dictionarySelect.empty(); // Очищаем список перед заполнением
-                data.forEach(dict => {
-                    dictionarySelect.append(new Option(dict.displayName, dict.name));
-                });
-            });
-        }
-
         // Загрузка данных таблицы
         function loadTable() {
             const dictionary = document.getElementById("dictionary").value;
@@ -38,14 +25,14 @@
                 $('#table-container').html(data);  // Вставляем таблицу в контейнер
                 // Инициализируем DataTables для сортировки
                 $('#data-table').DataTable({
-                    "order": []  // Параметр для отключения начальной сортировки (если нужно)
+                    "order": []  // Параметр для отключения начальной сортировки
                 });
             });
         }
 
-        // Загрузка данных справочников при загрузке страницы
+        // Загрузка данных при загрузке страницы
         $(document).ready(function() {
-            loadDictionaries();
+            loadTable();  // Загрузка таблицы с исполнителями по умолчанию
         });
     </script>
 </body>

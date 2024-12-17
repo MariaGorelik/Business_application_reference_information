@@ -21,16 +21,4 @@ class Song(db.Model):
     releaseDate = db.Column(db.Date, nullable=False)
     rating = db.Column(db.Float, default=0)
 
-# Define the Dictionary model
-class Dictionary(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
-    displayName = db.Column(db.String(100), nullable=False)
-
-# Define the DictionaryFields model
-class DictionaryFields(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    dictionaryId = db.Column(db.Integer, db.ForeignKey('dictionary.id'), nullable=False)
-    fieldName = db.Column(db.String(100), nullable=False)
-    displayName = db.Column(db.String(100), nullable=False)
-    fieldType = db.Column(db.String(20), nullable=False)
+    artist = db.relationship('Artist', backref=db.backref('songs', lazy=True))

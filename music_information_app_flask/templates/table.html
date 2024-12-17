@@ -2,7 +2,9 @@
     <thead>
         <tr>
             {% for field in fields %}
-                <th>{{ field }}</th> <!-- Заголовок каждого столбца -->
+                {% if field != 'id' %}  <!-- Исключаем столбец 'id' -->
+                    <th>{{ field }}</th>
+                {% endif %}
             {% endfor %}
         </tr>
     </thead>
@@ -10,7 +12,13 @@
         {% for row in data %}
             <tr>
                 {% for field in fields %}
-                    <td>{{ getattr(row, field) }}</td> <!-- Отображение значений для каждой строки -->
+                    {% if field != 'id' %}  <!-- Исключаем столбец 'id' -->
+                        {% if field == 'artist.name' %}
+                            <td>{{ row.artist.name }}</td>  <!-- Отображение имени исполнителя -->
+                        {% else %}
+                            <td>{{ getattr(row, field) }}</td>  <!-- Отображение других полей -->
+                        {% endif %}
+                    {% endif %}
                 {% endfor %}
             </tr>
         {% endfor %}
