@@ -6,58 +6,121 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
 </head>
 <body>
-    <h1>Добро пожаловать!</h1>
+    <h1>Модуль справочников</h1>
     <p>ФИО: Горелик Мария Вадимовна<br>Курс: 3<br>Группа: 11<br>Год: 2024</p>
 
     <label for="dictionary">Выберите справочник:</label>
-    <select id="dictionary" onchange="loadTable()">
-        <option value="artist">Исполнители</option>
-        <option value="song">Песни</option>
+    <select id="dictionary" onchange="window.location.href = '/?dictionary=' + this.value;">
+        <option value="artist" {% if dictionary == 'artist' %}selected{% endif %}>Исполнители</option>
+        <option value="song" {% if dictionary == 'song' %}selected{% endif %}>Песни</option>
     </select>
 
-    <div id="table-container"></div>
+    <!-- Контейнер для таблицы -->
+    <div id="table-container">
+        <!-- Здесь будет отображаться таблица в зависимости от выбранного справочника -->
+        {% if dictionary == 'artist' %}
+            <h2>Исполнители</h2>
+            <table id="data-table" class="display">
+                <thead>
+                    <tr>
+                        <th>Название исполнителя</th>
+                        <th>Дата начала карьеры</th>
+                        <th>Страна</th>
+                        <th>Описание</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for artist in artists %}
+                        <tr>
+                            <td>{{ artist.name }}</td>
+                            <td>{{ artist.startDate }}</td>
+                            <td>{{ artist.country }}</td>
+                            <td>{{ artist.description }}</td>
+                            <td>
+                                <a href="{{ url_for('edit_artist', artist_id=artist.id) }}">Редактировать</a> |
+                                <a href="{{ url_for('delete_artist', artist_id=artist.id) }}" onclick="return confirm('Вы уверены?')">Удалить</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% elif dictionary == 'song' %}
+            <h2>Песни</h2>
+            <table id="data-table" class="display">
+                <thead>
+                    <tr>
+                        <th>Исполнитель</th>
+                        <th>Название</th>
+                        <th>Жанр</th>
+                        <th>Длительность</th>
+                        <th>Дата релиза</th>
+                        <th>Рейтинг</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for song in songs %}
+                        <tr>
+                            <td>{{ song.artist.name }}</td>
+                            <td>{{ song.title }}</td>
+                            <td>{{ song.genre }}</td>
+                            <td>{{ song.duration }}</td>
+                            <td>{{ song.releaseDate }}</td>
+                            <td>{{ song.rating }}</td>
+                            <td>
+                                <a href="{{ url_for('edit_song', song_id=song.id) }}">Редактировать</a> |
+                                <a href="{{ url_for('delete_song', song_id=song.id) }}" onclick="return confirm('Вы уверены?')">Удалить</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+    </div>
 
+    <h2>Добавить новую запись</h2>
+    <form method="POST" action="/api/{{ dictionary }}">
+        {% if dictionary == 'song' %}
+            <label for="artistId">Исполнитель:</label>
+            <select name="artistId" id="artistId">
+                {% for artist in artists %}
+                    <option value="{{ artist.id }}">{{ artist.name }}</option>
+                {% endfor %}
+            </select><br>
+        {% elif dictionary == 'artist' %}
+            <label for="name">Название исполнителя:</label>
+            <input type="text" name="name" id="name" required><br>
+            <label for="startDate">Дата начала карьеры:</label>
+            <input type="date" name="startDate" id="startDate" required><br>
+            <label for="country">Страна:</label>
+            <input type="text" name="country" id="country" required><br>
+            <label for="description">Описание:</label>
+            <textarea name="description" id="description"></textarea><br>
+        {% endif %}
 
+        {% if dictionary == 'song' %}
+            <label for="title">Название песни:</label>
+            <input type="text" name="title" id="title" required><br>
+            <label for="genre">Жанр:</label>
+            <input type="text" name="genre" id="genre" required><br>
+            <label for="duration">Длительность (формат hh:mm:ss):</label>
+            <input type="text" name="duration" id="duration" required pattern="([0-9]{2}):([0-9]{2}):([0-9]{2})" placeholder="00:00:00"><br>
+            <label for="releaseDate">Дата релиза:</label>
+            <input type="date" name="releaseDate" id="releaseDate" required><br>
+            <label for="rating">Рейтинг:</label>
+            <input type="number" name="rating" id="rating" step="0.1" min="0" max="10"><br>
+        {% endif %}
+        <button type="submit">Добавить</button>
+    </form>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
-
     <script>
-        // Загрузка данных таблицы
-        function loadTable() {
-            const dictionary = document.getElementById("dictionary").value;
-            $.get(`/api/${dictionary}`, function(data) {
-                $('#table-container').html(data);  // Вставляем таблицу в контейнер
-                // Инициализируем DataTables для сортировки
-                $('#data-table').DataTable({
-                    "order": []  // Параметр для отключения начальной сортировки
-                });
-            });
-        }
-
-        // Обработчик отправки формы с использованием AJAX
-        $("#add-record-form").submit(function(event) {
-            event.preventDefault();  // Отменяем стандартную отправку формы
-
-            const form = $(this);
-            $.ajax({
-                url: form.attr('action'),  // Получаем URL из атрибута action формы
-                type: form.attr('method'),  // Используем метод формы (POST)
-                data: form.serialize(),  // Собираем данные формы
-                success: function(response) {
-                    // После успешной отправки данных, перезагружаем таблицу
-                    loadTable();  // Перезагружаем таблицу
-                    alert("Запись добавлена!");
-                },
-                error: function(xhr, status, error) {
-                    alert("Произошла ошибка при добавлении записи!");
-                }
-            });
-        });
-
-        // Загрузка данных при загрузке страницы
         $(document).ready(function() {
-            loadTable();  // Загрузка таблицы с исполнителями по умолчанию
+            $('#data-table').DataTable({
+                "order": []  // Параметр для отключения начальной сортировки
+            });
         });
     </script>
 </body>
