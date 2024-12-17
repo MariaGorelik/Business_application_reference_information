@@ -8,15 +8,20 @@
 <body>
     <h1>Добро пожаловать!</h1>
     <p>ФИО: Горелик Мария Вадимовна<br>Курс: 3<br>Группа: 11<br>Год: 2024</p>
+
     <label for="dictionary">Выберите справочник:</label>
     <select id="dictionary" onchange="loadTable()">
         <option value="artist">Исполнители</option>
         <option value="song">Песни</option>
     </select>
+
     <div id="table-container"></div>
+
+
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+
     <script>
         // Загрузка данных таблицы
         function loadTable() {
@@ -29,6 +34,26 @@
                 });
             });
         }
+
+        // Обработчик отправки формы с использованием AJAX
+        $("#add-record-form").submit(function(event) {
+            event.preventDefault();  // Отменяем стандартную отправку формы
+
+            const form = $(this);
+            $.ajax({
+                url: form.attr('action'),  // Получаем URL из атрибута action формы
+                type: form.attr('method'),  // Используем метод формы (POST)
+                data: form.serialize(),  // Собираем данные формы
+                success: function(response) {
+                    // После успешной отправки данных, перезагружаем таблицу
+                    loadTable();  // Перезагружаем таблицу
+                    alert("Запись добавлена!");
+                },
+                error: function(xhr, status, error) {
+                    alert("Произошла ошибка при добавлении записи!");
+                }
+            });
+        });
 
         // Загрузка данных при загрузке страницы
         $(document).ready(function() {

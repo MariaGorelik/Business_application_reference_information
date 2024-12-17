@@ -48,13 +48,10 @@
     {% elif entity == 'artist' %}
         <label for="name">Название исполнителя:</label>
         <input type="text" name="name" id="name" required><br>
-
         <label for="startDate">Дата начала карьеры:</label>
         <input type="date" name="startDate" id="startDate" required><br>
-
         <label for="country">Страна:</label>
         <input type="text" name="country" id="country" required><br>
-
         <label for="description">Описание:</label>
         <textarea name="description" id="description"></textarea><br>
     {% endif %}
@@ -62,16 +59,15 @@
     {% if entity == 'song' %}
         <label for="title">Название песни:</label>
         <input type="text" name="title" id="title" required><br>
-
         <label for="genre">Жанр:</label>
         <input type="text" name="genre" id="genre" required><br>
 
-        <label for="duration">Длительность:</label>
-        <input type="text" name="duration" id="duration" required><br>
+        <!-- Изменённое поле длительности -->
+        <label for="duration">Длительность (формат hh:mm:ss):</label>
+        <input type="text" name="duration" id="duration" required pattern="([0-9]{2}):([0-9]{2}):([0-9]{2})" placeholder="00:00:00"><br>
 
         <label for="releaseDate">Дата релиза:</label>
         <input type="date" name="releaseDate" id="releaseDate" required><br>
-
         <label for="rating">Рейтинг:</label>
         <input type="number" name="rating" id="rating" step="0.1" min="0" max="10"><br>
     {% endif %}
