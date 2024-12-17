@@ -1,0 +1,41 @@
+<h2>Редактировать {{ entity }}</h2>
+<form method="POST">
+    {% if entity == 'artist' %}
+        <label for="name">Имя исполнителя:</label>
+        <input type="text" name="name" value="{{ item.name }}" required><br>
+
+        <label for="startDate">Дата начала карьеры:</label>
+        <input type="date" name="startDate" value="{{ item.startDate }}" required><br>
+
+        <label for="country">Страна:</label>
+        <input type="text" name="country" value="{{ item.country }}" required><br>
+
+        <label for="description">Описание:</label>
+        <textarea name="description">{{ item.description }}</textarea><br>
+
+    {% else %}
+        <label for="title">Название песни:</label>
+        <input type="text" name="title" value="{{ item.title }}" required><br>
+
+        <label for="artistId">Исполнитель:</label>
+        <select name="artistId">
+            {% for artist in artists %}
+                <option value="{{ artist.id }}" {% if artist.id == item.artistId %}selected{% endif %}>{{ artist.name }}</option>
+            {% endfor %}
+        </select><br>
+
+        <label for="genre">Жанр:</label>
+        <input type="text" name="genre" value="{{ item.genre }}"><br>
+
+        <label for="duration">Длительность:</label>
+        <input type="text" name="duration" value="{{ item.duration }}"><br>
+
+        <label for="releaseDate">Дата релиза:</label>
+        <input type="date" name="releaseDate" value="{{ item.releaseDate }}"><br>
+
+        <label for="rating">Рейтинг:</label>
+        <input type="number" name="rating" min="0" max="10" value="{{ item.rating }}"><br>
+    {% endif %}
+
+    <button type="submit">Сохранить изменения</button>
+</form>

@@ -2,25 +2,80 @@
     <thead>
         <tr>
             {% for field in fields %}
-                {% if field != 'id' %}  <!-- Исключаем столбец 'id' -->
+                {% if field != 'id' %}
                     <th>{{ field }}</th>
                 {% endif %}
             {% endfor %}
+            <th>Действия</th>
         </tr>
     </thead>
     <tbody>
         {% for row in data %}
             <tr>
                 {% for field in fields %}
-                    {% if field != 'id' %}  <!-- Исключаем столбец 'id' -->
+                    {% if field != 'id' %}
                         {% if field == 'artist.name' %}
-                            <td>{{ row.artist.name }}</td>  <!-- Отображение имени исполнителя -->
+                            <td>{{ row.artist.name }}</td>
                         {% else %}
-                            <td>{{ getattr(row, field) }}</td>  <!-- Отображение других полей -->
+                            <td>{{ getattr(row, field) }}</td>
                         {% endif %}
                     {% endif %}
                 {% endfor %}
+                <td>
+                    {% if entity == 'artist' %}
+                        <a href="{{ url_for('edit_artist', artist_id=row.id) }}">Редактировать</a> |
+                        <a href="{{ url_for('delete_artist', artist_id=row.id) }}" onclick="return confirm('Вы уверены?')">Удалить</a>
+                    {% else %}
+                        <a href="{{ url_for('edit_song', song_id=row.id) }}">Редактировать</a> |
+                        <a href="{{ url_for('delete_song', song_id=row.id) }}" onclick="return confirm('Вы уверены?')">Удалить</a>
+                    {% endif %}
+                </td>
             </tr>
         {% endfor %}
     </tbody>
 </table>
+
+<!-- Форма для добавления -->
+<h2>Добавить новую запись</h2>
+<form method="POST" action="/api/{{ entity }}">
+    {% if entity == 'song' %}
+        <label for="artistId">Исполнитель:</label>
+        <select name="artistId" id="artistId">
+            {% for artist in artists %}
+                <option value="{{ artist.id }}">{{ artist.name }}</option>
+            {% endfor %}
+        </select><br>
+    {% elif entity == 'artist' %}
+        <label for="name">Название исполнителя:</label>
+        <input type="text" name="name" id="name" required><br>
+
+        <label for="startDate">Дата начала карьеры:</label>
+        <input type="date" name="startDate" id="startDate" required><br>
+
+        <label for="country">Страна:</label>
+        <input type="text" name="country" id="country" required><br>
+
+        <label for="description">Описание:</label>
+        <textarea name="description" id="description"></textarea><br>
+    {% endif %}
+
+    {% if entity == 'song' %}
+        <label for="title">Название песни:</label>
+        <input type="text" name="title" id="title" required><br>
+
+        <label for="genre">Жанр:</label>
+        <input type="text" name="genre" id="genre" required><br>
+
+        <label for="duration">Длительность:</label>
+        <input type="text" name="duration" id="duration" required><br>
+
+        <label for="releaseDate">Дата релиза:</label>
+        <input type="date" name="releaseDate" id="releaseDate" required><br>
+
+        <label for="rating">Рейтинг:</label>
+        <input type="number" name="rating" id="rating" step="0.1" min="0" max="10"><br>
+    {% endif %}
+
+    <button type="submit">Добавить</button>
+</form>
+
