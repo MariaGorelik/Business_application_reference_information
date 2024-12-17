@@ -28,23 +28,6 @@ def index():
     return render_template('index.html', dictionary=dictionary, artists=None, songs=None)
 
 
-# API route for loading Artist data
-@app.route('/api/artist', methods=['GET'])
-def get_artists():
-    artists = Artist.query.all()  # Get all artists from the database
-    fields = ['id', 'name', 'startDate', 'country', 'description']  # Fields to display
-    return render_template('table_data.html', data=artists, fields=fields, entity="artist")
-
-
-# API route for loading Song data
-@app.route('/api/song', methods=['GET'])
-def get_songs():
-    songs = Song.query.all()  # Get all songs from the database
-    fields = ['id', 'artist.name', 'title', 'genre', 'duration', 'releaseDate', 'rating']  # Fields to display
-    artists = Artist.query.all()  # Get all artists for select dropdown in the form
-    return render_template('table_data.html', data=songs, fields=fields, entity="song", artists=artists)
-
-
 # API route for adding an Artist entry
 @app.route('/api/<entity>', methods=['POST'])
 def add_record(entity):
