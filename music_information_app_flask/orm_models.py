@@ -1,9 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
 
-# Create the db object separately
 db = SQLAlchemy()
 
-# Define the Artist model
 class Artist(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
@@ -11,7 +9,6 @@ class Artist(db.Model):
     country = db.Column(db.String(40), nullable=False)
     description = db.Column(db.String(500), nullable=True)
 
-# Define the Song model
 class Song(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     artistId = db.Column(db.Integer, db.ForeignKey('artist.id'), nullable=False)

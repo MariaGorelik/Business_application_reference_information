@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Справочники</title>
-    <!-- Подключение Bootstrap CSS без integrity атрибута -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
 </head>
@@ -16,7 +15,6 @@
            <strong>Группа:</strong> 11<br>
            <strong>Год:</strong> 2024</p>
 
-        <!-- Выпадающий список для выбора справочника -->
         <div class="mb-4">
             <label for="dictionary" class="form-label">Выберите справочник:</label>
             <select id="dictionary" class="form-select" onchange="window.location.href = '/?dictionary=' + this.value;">
@@ -25,7 +23,6 @@
             </select>
         </div>
 
-        <!-- Контейнер для таблицы -->
         <div id="table-container">
             {% if dictionary == 'artist' %}
                 <h2>Исполнители</h2>
@@ -88,7 +85,6 @@
             {% endif %}
         </div>
 
-        <!-- Форма добавления новой записи -->
         <h2>Добавить новую запись</h2>
         <form method="POST" action="/api/{{ dictionary }}" class="mb-4">
             {% if dictionary == 'song' %}
@@ -145,13 +141,12 @@
         </form>
     </div>
 
-    <!-- Подключение jQuery и DataTables -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
     <script>
         $(document).ready(function() {
             $('#data-table').DataTable({
-                "order": []  // Параметр для отключения начальной сортировки
+                "order": []
             });
         });
     </script>

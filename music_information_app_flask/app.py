@@ -3,20 +3,17 @@ from orm_models import db, Artist, Song
 
 app = Flask(__name__)
 
-# Database URI
 app.config[
     'SQLALCHEMY_DATABASE_URI'] = "mssql+pyodbc://sa:486319@LAPTOP-1M8OJBHN\\SQLEXPRESS/Music_information?driver=ODBC+Driver+17+for+SQL+Server"
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # Disable track modifications
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-# Initialize the SQLAlchemy object
 db.init_app(app)
 
 
 @app.route('/')
 def index():
-    dictionary = request.args.get('dictionary', 'artist')  # По умолчанию 'artist'
+    dictionary = request.args.get('dictionary', 'artist')
 
-    # Получаем данные для таблицы в зависимости от выбранного справочника
     if dictionary == 'artist':
         artists = Artist.query.all()
         return render_template('index.html', dictionary=dictionary, artists=artists, songs=None)
@@ -28,7 +25,6 @@ def index():
     return render_template('index.html', dictionary=dictionary, artists=None, songs=None)
 
 
-# API route for adding an Artist entry
 @app.route('/api/<entity>', methods=['POST'])
 def add_record(entity):
     if entity == 'artist':
@@ -36,7 +32,6 @@ def add_record(entity):
         startDate = request.form['startDate']
         country = request.form['country']
         description = request.form.get('description', '')
-        # Create a new artist and add it to the database
         artist = Artist(name=name, startDate=startDate, country=country, description=description)
         db.session.add(artist)
         db.session.commit()
@@ -48,16 +43,14 @@ def add_record(entity):
         duration = request.form['duration']
         releaseDate = request.form['releaseDate']
         rating = request.form['rating']
-        # Create a new song and add it to the database
         song = Song(artistId=artistId, title=title, genre=genre, duration=duration, releaseDate=releaseDate,
                     rating=rating)
         db.session.add(song)
         db.session.commit()
         return redirect(url_for('index', dictionary='song'))
-    return redirect(url_for('index'))  # If an incorrect entity is passed
+    return redirect(url_for('index'))
 
 
-# API route for deleting an Artist entry
 @app.route('/api/artist/delete/<int:artist_id>', methods=['GET'])
 def delete_artist(artist_id):
     artist = Artist.query.get(artist_id)
@@ -67,7 +60,6 @@ def delete_artist(artist_id):
     return redirect(url_for('index', dictionary='artist'))
 
 
-# API route for deleting a Song entry
 @app.route('/api/song/delete/<int:song_id>', methods=['GET'])
 def delete_song(song_id):
     song = Song.query.get(song_id)
@@ -77,7 +69,6 @@ def delete_song(song_id):
     return redirect(url_for('index', dictionary='song'))
 
 
-# API route for editing an Artist entry
 @app.route('/api/artist/edit/<int:artist_id>', methods=['GET', 'POST'])
 def edit_artist(artist_id):
     artist = Artist.query.get(artist_id)
@@ -91,7 +82,6 @@ def edit_artist(artist_id):
     return render_template('edit_form.html', entity='artist', item=artist)
 
 
-# API route for editing a Song entry
 @app.route('/api/song/edit/<int:song_id>', methods=['GET', 'POST'])
 def edit_song(song_id):
     song = Song.query.get(song_id)
